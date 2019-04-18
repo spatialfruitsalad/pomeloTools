@@ -83,9 +83,10 @@ std::map<unsigned long, double> ellipVolumes;
         y = stod(ssv[2]);
         z = stod(ssv[3]);
         a1 = stod(ssv[4]);
-        a2 = stod(ssv[8]);
-        a3 = stod(ssv[12]);
+        a2 = stod(ssv[5]);
+        a3 = stod(ssv[6]);
 
+        if (label == 0) continue;
         linesloaded++;
         if (!checkpoint(x,y,z))
         {
@@ -97,18 +98,18 @@ std::map<unsigned long, double> ellipVolumes;
 
         ellipVolumes[label] = v;
     }
-    std::cout << "outside ellipsoids: " << erased << std::endl;
+    std::cout << "# outside ellipsoids: " << erased << std::endl;
 
 }
 
-    std::cout << "# parsed tetrahedra: " << ellipVolumes.size() << std::endl;
+    std::cout << "# parsed ellips: " << ellipVolumes.size() << std::endl;
 
 ///////////////////////
 // Parse CellVolumes
 ///////////////////////
     std::map<unsigned long, double> cellVolumes;
 {
-    std::cout << "# parse cell volume data" << std::endl;
+    std::cout << "# parse cell volume data ... ";
     std::ifstream infile;
     infile.open(setVoronoiVolumes);
     if (infile.fail())
@@ -123,12 +124,13 @@ std::map<unsigned long, double> ellipVolumes;
         unsigned long l = 0;
         double v = 0;
 
-
         std::istringstream iss(line);
         if (!(iss >> l >> v))
         {
             std::cerr << "error parsing line" << std::endl;
         }
+
+        if (v == 0) continue;
 
         if (ellipVolumes.count(l) == 1)
         {
@@ -196,6 +198,7 @@ double totalCellColume = 0;
     for (auto it = ellipVolumes.begin(); it != ellipVolumes.end(); ++it)
     {
         double cv = cellVolumes[it->first];
+        if (cv == 0) continue;
         totalCellColume +=cv;
         lpfs.push_back(it->second/cv);
         labels.push_back(it->first);
