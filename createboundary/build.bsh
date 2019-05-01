@@ -1,0 +1,3 @@
+#!/bin/bash
+
+clang++ -Wall -Wextra -O3 --std=c++14 -o createBoundary main.cpp
